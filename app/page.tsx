@@ -1,10 +1,10 @@
 import PatientForm from "@/components/form/PatientForm";
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 
 export default function Home() {
   const currentYear = new Date().getFullYear();
+  // TODO: OTP Verification | PasskeyModal
 
   return (
     <div className="flex h-screen max-h-screen">
