@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
-import CustomFormField from "../ui/CustomFormField";
+import CustomFormField from "../CustomFormField";
+import SubmitButton from "../SubmitButton";
 
 export enum FormFieldType {
   INPUT = "input",
@@ -19,21 +19,35 @@ export enum FormFieldType {
 }
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+  name: z.string().min(2, {
+    message: "Name must be at least 2 characters.",
+  }),
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  phone: z.string().min(7, {
+    message: "Please enter a valid phone number.",
   }),
 });
 
+type PatientFormValues = z.infer<typeof formSchema>;
+
 const PatientForm = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const [isLoading, setIsLoading] = useState(false);
+
+  const form = useForm<PatientFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      name: "",
+      email: "",
+      phone: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(values: PatientFormValues) {
+    setIsLoading(true);
     console.log(values);
+    setIsLoading(false);
   }
 
   return (
@@ -43,6 +57,7 @@ const PatientForm = () => {
           <h1 className="header">Hi there👋</h1>
           <p className="text-dark-700">Schedule your first appointment.</p>
         </section>
+
         <CustomFormField
           fieldType={FormFieldType.INPUT}
           control={form.control}
@@ -71,7 +86,7 @@ const PatientForm = () => {
           placeholder="(555) 123-4567"
         />
 
-        <Button type="submit">Submit</Button>
+        <SubmitButton isLoading={isLoading}>Get Started</SubmitButton>
       </form>
     </Form>
   );

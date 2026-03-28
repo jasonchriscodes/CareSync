@@ -1,5 +1,15 @@
 "use client";
 
+import React from "react";
+import Image from "next/image";
+import "react-phone-number-input/style.css";
+import PhoneInput from "react-phone-number-input";
+import {
+  Control,
+  ControllerRenderProps,
+  FieldValues,
+  Path,
+} from "react-hook-form";
 import {
   FormControl,
   FormField,
@@ -8,15 +18,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Control } from "react-hook-form";
-import { FormFieldType } from "../form/PatientForm";
-import Image from "next/image";
-import "react-phone-number-input/style.css";
-import PhoneInput from "react-phone-number-input";
+import { FormFieldType } from "./form/PatientForm";
 
-interface CustomProps {
-  control: Control<any>;
-  name: string;
+interface CustomProps<T extends FieldValues> {
+  control: Control<T>;
+  name: Path<T>;
   label?: string;
   placeholder?: string;
   iconSrc?: string;
@@ -25,14 +31,22 @@ interface CustomProps {
   dateFormat?: string;
   showTimeSelect?: boolean;
   children?: React.ReactNode;
-  renderSkeleton?: (field: any) => React.ReactNode;
+  renderSkeleton?: (
+    field: ControllerRenderProps<T, Path<T>>,
+  ) => React.ReactNode;
   fieldType: FormFieldType;
 }
 
-const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
-  const { fieldType, iconSrc, iconAlt, placeholder } = props;
+const RenderField = <T extends FieldValues>({
+  field,
+  props,
+}: {
+  field: ControllerRenderProps<T, Path<T>>;
+  props: CustomProps<T>;
+}) => {
+  const { fieldType, iconSrc, iconAlt, placeholder, disabled } = props;
 
-  switch (props.fieldType) {
+  switch (fieldType) {
     case FormFieldType.INPUT:
       return (
         <div className="flex rounded-md border border-dark-500 bg-dark-400">
@@ -49,6 +63,7 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
             <Input
               placeholder={placeholder}
               {...field}
+              disabled={disabled}
               className="shad-input border-0"
             />
           </FormControl>
@@ -59,23 +74,24 @@ const RenderField = ({ field, props }: { field: any; props: CustomProps }) => {
       return (
         <FormControl>
           <PhoneInput
-            defaultCountry="US"
+            defaultCountry="NZ"
             placeholder={placeholder}
             international
             withCountryCallingCode
-            value={field.value}
+            value={(field.value as string) || ""}
             onChange={field.onChange}
+            disabled={disabled}
             className="input-phone shad-input border-0"
           />
         </FormControl>
       );
 
     default:
-      break;
+      return null;
   }
 };
 
-const CustomFormField = (props: CustomProps) => {
+const CustomFormField = <T extends FieldValues>(props: CustomProps<T>) => {
   const { control, fieldType, name, label } = props;
 
   return (
