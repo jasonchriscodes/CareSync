@@ -18,7 +18,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { FormFieldType } from "./form/PatientForm";
+import { FormFieldType } from "./form/RegisterForm";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 interface CustomProps<T extends FieldValues> {
   control: Control<T>;
@@ -37,14 +39,23 @@ interface CustomProps<T extends FieldValues> {
   fieldType: FormFieldType;
 }
 
-const RenderField = <T extends FieldValues>({
+function RenderField<T extends FieldValues>({
   field,
   props,
 }: {
   field: ControllerRenderProps<T, Path<T>>;
   props: CustomProps<T>;
-}) => {
-  const { fieldType, iconSrc, iconAlt, placeholder, disabled } = props;
+}) {
+  const {
+    fieldType,
+    iconSrc,
+    iconAlt,
+    placeholder,
+    disabled,
+    showTimeSelect,
+    dateFormat,
+    renderSkeleton,
+  } = props;
 
   switch (fieldType) {
     case FormFieldType.INPUT:
@@ -86,12 +97,40 @@ const RenderField = <T extends FieldValues>({
         </FormControl>
       );
 
+    case FormFieldType.DATE_PICKER:
+      return (
+        <div className="flex rounded-md border border-dark-500 bg-dark-400">
+          <Image
+            src="/assets/icons/calendar.svg"
+            height={24}
+            width={24}
+            alt="calendar"
+            className="ml-2"
+          />
+          <FormControl>
+            <DatePicker
+              selected={field.value}
+              onChange={(date) => field.onChange(date)}
+              placeholderText={placeholder}
+              className="shad-input border-0"
+              dateFormat={dateFormat ?? "MM/dd/yyyy"}
+              showTimeSelect={showTimeSelect ?? false}
+              timeInputLabel="Time:"
+              wrapperClassName="date-picker"
+            />
+          </FormControl>
+        </div>
+      );
+
+    case FormFieldType.SKELETON:
+      return renderSkeleton ? renderSkeleton(field) : null;
+
     default:
       return null;
   }
-};
+}
 
-const CustomFormField = <T extends FieldValues>(props: CustomProps<T>) => {
+function CustomFormField<T extends FieldValues>(props: CustomProps<T>) {
   const { control, fieldType, name, label } = props;
 
   return (
@@ -111,6 +150,6 @@ const CustomFormField = <T extends FieldValues>(props: CustomProps<T>) => {
       )}
     />
   );
-};
+}
 
 export default CustomFormField;
