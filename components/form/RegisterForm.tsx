@@ -150,7 +150,7 @@ const RegisterForm = ({ user }: { user: User }) => {
                 <RadioGroup
                   className="flex h-11 gap-6 xl:justify-between"
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={field.value as string | undefined}
                 >
                   {GenderOptions.map((option, i) => (
                     <div key={option + i} className="radio-group">
@@ -271,7 +271,7 @@ const RegisterForm = ({ user }: { user: User }) => {
           <CustomFormField
             fieldType={FormFieldType.TEXTAREA}
             control={form.control}
-            name="fanmilyMedicalHistory"
+            name="familyMedicalHistory"
             label="Family medical history"
             placeholder="Mother had brain cancer, Father had heart disease"
           />
@@ -320,7 +320,10 @@ const RegisterForm = ({ user }: { user: User }) => {
           label="Scanned Copy of Identification Document"
           renderSkeleton={(field) => (
             <FormControl>
-              <FileUploader files={field.value} onChange={field.onChange} />
+              <FileUploader
+                files={field.value as File[] | undefined}
+                onChange={field.onChange}
+              />
             </FormControl>
           )}
         />
