@@ -54,6 +54,23 @@ export const getUser = async (userId: string) => {
   }
 };
 
+export const getPatient = async (userId: string) => {
+  try {
+    const patients = await databases.listDocuments(
+      DATABASE_ID!,
+      PATIENT_COLLECTION_ID!,
+      [Query.equal("userId", [userId])],
+    );
+
+    return parseStringify(patients.documents[0]);
+  } catch (error) {
+    console.error(
+      "An error occurred while retrieving the user details:",
+      error,
+    );
+  }
+};
+
 export const registerPatient = async ({
   identificationDocument,
   ...patient
@@ -73,7 +90,7 @@ export const registerPatient = async ({
       file = await storage.createFile(BUCKET_ID!, ID.unique(), inputFile);
     }
 
-    console.log({gender:patient.gender})
+    console.log({ gender: patient.gender });
 
     const newPatient = await databases.createDocument(
       DATABASE_ID!,
