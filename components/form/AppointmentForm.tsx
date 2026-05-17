@@ -53,6 +53,13 @@ const AppointmentForm = ({
     },
   });
 
+  // console.log({
+  //   userId,
+  //   patientId,
+  //   type,
+  //   appointment,
+  // });
+
   async function onSubmit(values: z.infer<typeof AppointmentFormValidation>) {
     setIsLoading(true);
 
